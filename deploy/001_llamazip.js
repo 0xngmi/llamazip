@@ -11,7 +11,7 @@ const func = async function (hre) {
   
     await deploy('LlamaZip', {
       from: deployer,
-      args: ["0x5c69bee701ef814a2b6a3edd4b1652cb9cc5aa6f", "0x4200000000000000000000000000000000000006", PairListDeployment.address],
+      args: ["0x1F98431c8aD98523631AE4a59f267346ea31F984", "0x4200000000000000000000000000000000000006", PairListDeployment.address],
       log: true,
       autoMine: true, // speed up deployment on local network (ganache, hardhat), no effect on live networks
       //deterministicDeployment: true,
