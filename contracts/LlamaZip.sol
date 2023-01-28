@@ -6,7 +6,7 @@ import "./router/SwapRouter.sol";
 import "./router/libs/IERC20.sol";
 
 contract LlamaZip is SwapRouter {
-    address public immutable pairList;
+    address internal immutable pairList; // Set to internal to avoid collisions
 
     constructor(address _factory, address _WETH9, address _pairList) SwapRouter(_factory, _WETH9) {
         pairList = _pairList;

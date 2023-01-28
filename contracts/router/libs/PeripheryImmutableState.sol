@@ -4,8 +4,8 @@ pragma solidity =0.7.6;
 /// @title Immutable state
 /// @notice Immutable state used by periphery contracts
 abstract contract PeripheryImmutableState {
-    address public immutable factory;
-    address public immutable WETH9;
+    address internal immutable factory;
+    address internal immutable WETH9;
 
     constructor(address _factory, address _WETH9) {
         factory = _factory;
