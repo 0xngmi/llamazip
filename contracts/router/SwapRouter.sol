@@ -42,32 +42,38 @@ contract SwapRouter is PeripheryImmutableState, PeripheryPayments {
         address payer;
     }
 
-    function swap(address tokenIn, address tokenOut, uint24 fee, uint amountIn, uint minAmountOut) internal {
+    function swap(address tokenIn, address tokenOut, uint24 fee, uint amountIn, uint expectedAmountOut, uint minAmountOut) internal {
         bool zeroForOne = tokenIn < tokenOut;
+
+        bytes memory data = abi.encode(SwapCallbackData({
+            tokenIn: tokenIn,
+            tokenOut: tokenOut,
+            fee: fee,
+            payer: msg.sender
+        }));
 
         (int256 amount0, int256 amount1) =
             getPool(tokenIn, tokenOut, fee).swap(
-                tokenOut == WETH9? address(this):msg.sender,
+                address(this),
                 zeroForOne,
                 amountIn.toInt256(),
                 (zeroForOne ? MIN_SQRT_RATIO + 1 : MAX_SQRT_RATIO - 1),
-                abi.encode(SwapCallbackData({
-                    tokenIn: tokenIn,
-                    tokenOut: tokenOut,
-                    fee: fee,
-                    payer: msg.sender
-                }))
+                data
             );
 
         uint amountOut = uint256(-(zeroForOne ? amount1 : amount0));
+        if(amountOut > expectedAmountOut){
+            amountOut = expectedAmountOut;
+        }
 
         require(amountOut >= minAmountOut, 'Too little received');
 
         if(tokenOut == WETH9){
             // Doesn't support WETH output since we can't differentiate
-            uint256 balanceWETH9 = IWETH9(WETH9).balanceOf(address(this));
-            IWETH9(WETH9).withdraw(balanceWETH9);
-            TransferHelper.safeTransferETH(msg.sender, balanceWETH9);
+            IWETH9(WETH9).withdraw(amountOut);
+            TransferHelper.safeTransferETH(msg.sender, amountOut);
+        } else {
+            TransferHelper.safeTransfer(tokenOut, msg.sender, amountOut);
         }
     }
 

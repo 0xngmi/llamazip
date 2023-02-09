@@ -24,6 +24,7 @@ describe("LlamaZip", function () {
         await pl.setPool(BigNumber.from("1").shl(256-4), "0x88e6a0c2ddd26feeb64f039a2c41296fcb3f5640") // usdc/eth 0.05%
         const firstCalldata = encode("1", false, // ETH->USDC
             "1000000000", // 1k USDC
+            "0.5",
             true,
             false,
             ""
@@ -38,7 +39,7 @@ describe("LlamaZip", function () {
         const postEth = await ethers.provider.getBalance(owner.address);
 
         expect(Number(prevEth.sub(postEth).toString())).to.be.approximately(1e18, 1e16)
-        expect(await USDC.balanceOf(lz.address)).to.equal(0)
+        expect(Number(await USDC.balanceOf(lz.address))).to.be.approximately(500e6, 100e6)
         expect(await USDC.balanceOf(owner.address)).to.be.above(1000e6)
 
         await USDC.approve(lz.address, "999999999999999999999999999999")
@@ -47,6 +48,7 @@ describe("LlamaZip", function () {
             to: lz.address,
             data: encode("1", true, // USDC -> ETH
                 ethers.utils.parseUnits("0.5", "ether"),
+                "1",
                 false,
                 false,
                 "1000000000" // 1k USDC
