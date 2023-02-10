@@ -1,5 +1,6 @@
 //SPDX-License-Identifier: None
 pragma solidity =0.7.6;
+pragma abicoder v2;
 
 import "./PairList.sol";
 import "./router/SwapRouter.sol";
@@ -45,8 +46,8 @@ significant bits	till end
         }
         uint pair = data & (0xf << (256-4));
         uint token0IsTokenIn = data & (0x1 << (256-4-1));
-        (address token0,address token1,uint24 fee) = PairList(pairList).pools(pair);
-        address tokenIn = token0IsTokenIn == 0?token1:token0;
+        PairList.Pool memory pool = PairList(pairList).getPool(pair);
+        address tokenIn = token0IsTokenIn == 0?pool.token1:pool.token0;
 
         uint totalIn;
         if(tokenIn == WETH9 && msg.value > 0){
@@ -87,7 +88,7 @@ significant bits	till end
 
         uint minTotalOut = (expectedTotalOut * slippageBps)/MAX_BPS;
 
-        address tokenOut = token0IsTokenIn == 0?token0:token1;
-        swap(tokenIn, tokenOut, fee, totalIn, expectedTotalOut, minTotalOut);
+        address tokenOut = token0IsTokenIn == 0?pool.token0:pool.token1;
+        swap(tokenIn, tokenOut, pool.fee, totalIn, expectedTotalOut, minTotalOut);
     }
 }
