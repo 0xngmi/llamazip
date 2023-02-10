@@ -14,19 +14,6 @@ contract LlamaZip is SwapRouter {
         pairList = _pairList;
     }
 
-/*
-pairs	4
-swapDirection 1
-	
-slippage bits	16
-zeros	8
-slippage 2
-	
-decimal zeros	5
-significant bits	till end
-    -> if empty -> use max balance
-*/
-
     // Because of function uniswapV3SwapCallback() 2.3e-8% of calls will fail because they'll hit that selector
     fallback() external payable {
         if(msg.sender == pairList){
