@@ -6,7 +6,7 @@ async function deploy() {
     await pl.deployed();
 
     const lzf = await ethers.getContractFactory("LlamaZip");
-    const lz = await lzf.deploy("0x1f98431c8ad98523631ae4a59f267346ea31f984", "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2", pl.address);
+    const lz = await lzf.deploy("0x1F98431c8aD98523631AE4a59f267346ea31F984", "0x4200000000000000000000000000000000000006", pl.address);
     await lz.deployed();
 
     return { pl, lz }
