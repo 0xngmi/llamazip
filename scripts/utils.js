@@ -23,11 +23,11 @@ function encode(pair, token0IsTokenIn, expectedReturnAmount, slippage, inputIsET
   word = word.shl(17)
   let slippageZeroes = 0;
   let slippageNum = BigNumber.from(expectedReturnAmount)
-  while (slippageNum > 131071) { // 0b11111111111111111
+  while (slippageNum.gt(131071)) { // 0b11111111111111111
       slippageZeroes++;
       slippageNum = slippageNum.div(2)
   }
-  if(slippageNum < 131071){
+  if(slippageNum.lt(131071)){
     slippageNum = slippageNum.add(1) // round up
   }
   word = word.add(slippageNum).shl(8).add(slippageZeroes)
@@ -44,7 +44,7 @@ function encode(pair, token0IsTokenIn, expectedReturnAmount, slippage, inputIsET
 
   let inputZeroes = 0;
   let inputNum = BigNumber.from(inputAmount)
-  while (inputNum % 10 == 0 && inputNum !== 0) {
+  while (inputNum.mod(10).isZero() && !inputNum.isZero()) {
       inputZeroes++;
       inputNum = inputNum.div(10);
   }
