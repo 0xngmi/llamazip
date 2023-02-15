@@ -51,6 +51,7 @@ contract PairList is Ownable {
     }
 
     function sweepTokenFromRouter(address router, address token, uint amount, address receiver) onlyOwner external {
-        router.call(abi.encode(token, amount, receiver)); // We don't care if call fails
+        (bool success, ) = router.call(abi.encode(token, amount, receiver));
+        require(success);
     }
 }
