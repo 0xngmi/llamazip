@@ -36,6 +36,10 @@ contract LlamaZip is SwapRouter {
         PairList.Pool memory pool = PairList(pairList).getPool(pair);
         address tokenIn = token0IsTokenIn == 0?pool.token1:pool.token0;
 
+        uint expectedSignificantBits = (data & (0x1ffff << (256-5-17))) >> (256-5-17);
+        uint outZeros = (data & (0xff << (256-5-17-8))) >> (256-5-17-8);
+        uint expectedTotalOut = expectedSignificantBits << outZeros;
+
         uint totalIn;
         if(tokenIn == WETH9 && msg.value > 0){
             totalIn = msg.value;
@@ -43,6 +47,7 @@ contract LlamaZip is SwapRouter {
             uint inputDataExists = data & (type(uint256).max >> 5+17+8+2);
             if(inputDataExists == 0){
                 totalIn = IERC20(tokenIn).balanceOf(msg.sender);
+                expectedTotalOut = (expectedTotalOut*totalIn)/1e18; // use it as a rate instead
             } else {
                 uint inZeros = (data & (0x1f << (256-5-17-8-2-5))) >> (256-5-17-8-2-5);
                 uint calldataLength;
@@ -54,10 +59,6 @@ contract LlamaZip is SwapRouter {
                 totalIn = significantInputBits * (10**inZeros);
             }
         }
-
-        uint expectedSignificantBits = (data & (0x1ffff << (256-5-17))) >> (256-5-17);
-        uint outZeros = (data & (0xff << (256-5-17-8))) >> (256-5-17-8);
-        uint expectedTotalOut = expectedSignificantBits << outZeros;
 
         uint slippageBps;
         {
