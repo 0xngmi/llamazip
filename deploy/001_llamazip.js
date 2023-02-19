@@ -7,11 +7,11 @@ const func = async function (hre) {
     }
   
     const {deployer} = await getNamedAccounts();
-    const PairListDeployment = await deployments.get('PairList');
+    const OwnerDeployment = await deployments.get('Owner');
   
     await deploy('LlamaZip', {
       from: deployer,
-      args: ["0x1F98431c8aD98523631AE4a59f267346ea31F984", "0x4200000000000000000000000000000000000006", PairListDeployment.address],
+      args: ["0x1F98431c8aD98523631AE4a59f267346ea31F984", "0x4200000000000000000000000000000000000006", OwnerDeployment.address],
       log: true,
       autoMine: true, // speed up deployment on local network (ganache, hardhat), no effect on live networks
       //deterministicDeployment: true,
@@ -19,4 +19,4 @@ const func = async function (hre) {
   };
   module.exports = func;
   func.tags = ['LlamaZip'];
-  func.dependencies = ['PairList'];
+  func.dependencies = ['Owner'];

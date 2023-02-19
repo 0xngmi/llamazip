@@ -8,7 +8,7 @@ const func = async function (hre) {
   
     const {deployer} = await getNamedAccounts();
   
-    await deploy('PairList', {
+    await deploy('Owner', {
       from: deployer,
       args: [],
       log: true,
@@ -17,5 +17,5 @@ const func = async function (hre) {
     });
   };
   module.exports = func;
-  func.tags = ['PairList'];
+  func.tags = ['Owner'];
   
